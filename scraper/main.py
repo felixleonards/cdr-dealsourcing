@@ -1,16 +1,18 @@
 import os
-from scraper.sources import carbon_herald, gcca, press_wires, puro_earth, carbonfuture, newsrooms
+from scraper.sources import carbon_herald, gcca, press_wires, puro_earth, carbonfuture, newsrooms, cdr_fyi
 from scraper.extractor import extract_deal
 from scraper.notion_writer import write_deal
 from scraper.deduplication import load_seen_urls, save_seen_urls, is_new
 
 ALL_SOURCES = [
-    carbon_herald.get_articles,
+    carbon_herald.get_archive_articles,  # historical archive first
+    carbon_herald.get_articles,           # then recent RSS
     gcca.get_articles,
     press_wires.get_articles,
     puro_earth.get_articles,
     carbonfuture.get_articles,
     newsrooms.get_articles,
+    cdr_fyi.get_articles,
 ]
 
 

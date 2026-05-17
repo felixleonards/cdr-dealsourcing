@@ -1,4 +1,5 @@
 import os
+import traceback
 from scraper.sources import carbon_herald, gcca, press_wires, puro_earth, carbonfuture, newsrooms, cdr_fyi
 from scraper.extractor import extract_deal
 from scraper.sheets_writer import write_deal
@@ -43,7 +44,8 @@ def run(nvidia_key: str, credentials_json: str, sheet_id: str) -> None:
                 deals_written += 1
                 print(f"[OK] {article.url}")
             except Exception as e:
-                print(f"[ERROR] Writing deal from {article.url}: {e}")
+                print(f"[ERROR] Writing deal from {article.url}: {e!r}")
+                traceback.print_exc()
 
     seen.update(new_urls)
     save_seen_urls(seen)

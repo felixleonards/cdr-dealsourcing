@@ -1,4 +1,24 @@
+import re
 from notion_client import Client
+
+
+def _normalize_date(value) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, list):
+        value = value[0] if value else None
+    if not isinstance(value, str) or not value.strip():
+        return None
+    value = value.strip()
+    # Already ISO 8601
+    if re.match(r'^\d{4}-\d{2}-\d{2}', value):
+        return value[:10]
+    # Try dateutil for flexible parsing (handles "Apr 28, 2026", "04.05.2026", etc.)
+    try:
+        from dateutil import parser as dp
+        return dp.parse(value, dayfirst=False).strftime('%Y-%m-%d')
+    except Exception:
+        return None
 
 
 def _build_properties(deal: dict) -> dict:
@@ -35,8 +55,9 @@ def _build_properties(deal: dict) -> dict:
         "deal_datum": "Deal-Datum",
     }
     for key, notion_field in date_fields.items():
-        if deal.get(key):
-            props[notion_field] = {"date": {"start": deal[key]}}
+        normalized = _normalize_date(deal.get(key))
+        if normalized:
+            props[notion_field] = {"date": {"start": normalized}}
 
     if deal.get("cdr_typ"):
         props["CDR-Typ"] = {"select": {"name": deal["cdr_typ"]}}

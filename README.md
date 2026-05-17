@@ -48,6 +48,13 @@ Add these three secrets:
 
 ### 4. Push to GitHub and Enable Actions
 
+Before pushing, make sure `seen_urls.json` exists in the repo root with content `[]`:
+```bash
+echo '[]' > seen_urls.json
+git add seen_urls.json
+git commit -m "chore: initialize seen_urls"
+```
+
 ```bash
 git remote add origin https://github.com/YOUR_USERNAME/cdr-dealsourcing.git
 git branch -M main

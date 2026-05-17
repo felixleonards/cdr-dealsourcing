@@ -25,7 +25,7 @@ def extract_deal(text: str, api_key: str) -> dict | None:
     )
     raw = response.choices[0].message.content.strip()
     data = _parse_json(raw)
-    if data is None or data.get("kein_deal"):
+    if data is None or not isinstance(data, dict) or data.get("kein_deal"):
         return None
     return data
 

@@ -1,7 +1,7 @@
 import os
 from scraper.sources import carbon_herald, gcca, press_wires, puro_earth, carbonfuture, newsrooms, cdr_fyi
 from scraper.extractor import extract_deal
-from scraper.notion_writer import write_deal
+from scraper.sheets_writer import write_deal
 from scraper.deduplication import load_seen_urls, save_seen_urls, is_new
 
 ALL_SOURCES = [
@@ -16,7 +16,7 @@ ALL_SOURCES = [
 ]
 
 
-def run(nvidia_key: str, notion_token: str, database_id: str) -> None:
+def run(nvidia_key: str, credentials_json: str, sheet_id: str) -> None:
     seen = load_seen_urls()
     new_urls: set[str] = set()
     deals_written = 0
@@ -39,7 +39,7 @@ def run(nvidia_key: str, notion_token: str, database_id: str) -> None:
 
             deal["quelle"] = article.url
             try:
-                write_deal(deal, database_id, notion_token)
+                write_deal(deal, credentials_json, sheet_id)
                 deals_written += 1
                 print(f"[OK] {article.url}")
             except Exception as e:
@@ -53,6 +53,6 @@ def run(nvidia_key: str, notion_token: str, database_id: str) -> None:
 if __name__ == "__main__":
     run(
         nvidia_key=os.environ["NVIDIA_API_KEY"],
-        notion_token=os.environ["NOTION_API_KEY"],
-        database_id=os.environ["NOTION_DATABASE_ID"],
+        credentials_json=os.environ["GOOGLE_CREDENTIALS"],
+        sheet_id=os.environ["GOOGLE_SHEET_ID"],
     )
